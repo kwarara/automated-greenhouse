@@ -1,3 +1,15 @@
+//  Code for an ESP8266 with DHT22.
+//  Detects temperature and humidity and sends to an mqtt hub.
+//  Only sends data if the valu ehas changed.
+//  Derived from an original thingsboard source.
+
+/////////////////////////////////////////
+// TO DO
+//
+// Remove thingsboard token
+// Secure commuication with mqtt hub
+/////////////////////////////////////////
+
 #include "DHT.h"
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
@@ -11,10 +23,8 @@
 #define DHTPIN 2
 #define DHTTYPE DHT22
 
-//char iotHub[] = "demo.thingsboard.io";
 char iotHub[] = "192.168.0.8";
 unsigned int iotHubPort = 1883;
-char topic[] = "v1/devices/me/telemetry";
 char tempTopic[] = "home/greenhouse/temp";
 char humidTopic[] = "home/greenhouse/humidity";
 int pause = 10000;
@@ -34,8 +44,12 @@ String lastt;
 void setup()
 {
   Serial.begin(115200);
+
+  //  Begin dht sensor
   dht.begin();
   delay(10);
+
+  //  Initialise wifi
   InitWiFi();
   client.setServer( iotHub, iotHubPort );
   lastSend = 0;
